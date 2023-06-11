@@ -58,7 +58,10 @@ try {
     return
 }
 
-# Import modules
+# ==============================
+# MODEL
+# ==============================
+# Get all module files
 $moduleFiles = Get-ChildItem -Path $moduleFolderPath -Filter *.psm1
 
 foreach ($moduleFile in $moduleFiles) {
@@ -78,8 +81,28 @@ foreach ($moduleFile in $moduleFiles) {
 # ==============================
 # VIEW
 # ==============================
-# TODO: Define functions for view (convert XAML > XML, add tab items, add buttons to toolbox, add properties to view)
-# TODO: Import XAML strings
+# Get all XAML files, except the sharedResources XAML file
+$xamlStrings = @{}
+$sharedResourcesFile = "sharedResources.xaml"
+$xamlFiles = Get-ChildItem -Path $resourceFolderPath -Filter *.xaml | Where-Object { $_.Name -ne $sharedResourcesFile }
+
+foreach ($xamlFile in $xamlFiles) {
+    # Set paths
+    $xamlFilePath = $xamlFile.FullName
+    $sharedResourcesFilePath = Join-Path $resourceFolderPath $sharedResourcesFile
+
+    # Import the XAML file as a string
+    $xamlString = Get-Content -Path $xamlFilePath -Raw
+
+    # Fix relative path issue: Replace empty ResourceDictionary element with shared resources path in XAML
+    $modifiedXamlString = $xamlString -replace '<ResourceDictionary />', "<ResourceDictionary Source='$sharedResourcesFilePath'/>"
+
+    # Add each XAML string to a hashtable
+    $xamlName = $xamlFile -replace ".xaml", ""
+    $xamlStrings[$xamlName] = $modifiedXamlString
+    Write-Host "Successfully imported XAML string: $xamlFilePath"
+}
+
 # TODO: Define UI element variables
 
 # ==============================
