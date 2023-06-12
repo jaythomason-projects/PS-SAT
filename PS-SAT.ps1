@@ -84,18 +84,17 @@ foreach ($moduleFile in $moduleFiles) {
 # Get all XAML files, except the sharedResources XAML file
 $xamlStrings = @{}
 $sharedResourcesFile = "sharedResources.xaml"
-$xamlFiles = Get-ChildItem -Path $resourceFolderPath -Filter *.xaml | Where-Object { $_.Name -ne $sharedResourcesFile }
+$xamlFiles = Get-ChildItem -Path $resourceFolderPath -Filter *.xaml | Where-Object { $_.Name -ne "sharedResources.xaml" }
 
 foreach ($xamlFile in $xamlFiles) {
     # Set paths
     $xamlFilePath = $xamlFile.FullName
-    $sharedResourcesFilePath = Join-Path $resourceFolderPath $sharedResourcesFile
 
     # Import the XAML file as a string
     $xamlString = Get-Content -Path $xamlFilePath -Raw
 
     # Fix relative path issue: Replace empty ResourceDictionary element with shared resources path in XAML
-    $modifiedXamlString = $xamlString -replace '<ResourceDictionary />', "<ResourceDictionary Source='$sharedResourcesFilePath'/>"
+    $modifiedXamlString = $xamlString -replace '%%RESOURCE_PATH%%', $resourceFolderPath
 
     # Add each XAML string to a hashtable
     $xamlName = $xamlFile -replace ".xaml", ""
@@ -103,6 +102,7 @@ foreach ($xamlFile in $xamlFiles) {
     Write-Host "Successfully imported XAML string: $xamlFilePath"
 }
 
+Start-Sleep
 # TODO: Define UI element variables
 
 # ==============================
