@@ -83,7 +83,6 @@ foreach ($moduleFile in $moduleFiles) {
 # ==============================
 # Get all XAML files, except the sharedResources XAML file
 $xamlStrings = @{}
-$sharedResourcesFile = "sharedResources.xaml"
 $xamlFiles = Get-ChildItem -Path $resourceFolderPath -Filter *.xaml | Where-Object { $_.Name -ne "sharedResources.xaml" }
 
 foreach ($xamlFile in $xamlFiles) {
@@ -102,8 +101,25 @@ foreach ($xamlFile in $xamlFiles) {
     Write-Host "Successfully imported XAML string: $xamlFilePath"
 }
 
-Start-Sleep
-# TODO: Define UI element variables
+# Create UI pages
+$global:uiPages = @{
+    'MainWindow' = @{}
+    'UserPropertiesTab' = @{}
+    'LogTab' = @{}
+}
+
+# Create parent window and tab elements
+$uiPages['MainWindow']                   = New-XmlObjectFromXamlString -XamlString $xamlStrings['mainWindow']
+$uiPages['UserPropertiesTab']            = New-XmlObjectFromXamlString -XamlString $xamlStrings['userPropertiesTab']
+$uiPages['LogTab']                       = New-XmlObjectFromXamlString -XamlString $xamlStrings['logTab']
+
+# Assign variables to each named node in the UI pages
+$global:uiElements = @{}
+
+# Go through each UI page in the hashtable
+foreach ($element in $uiPages.Values) {
+    Set-ElementVariables -Element $element
+}
 
 # ==============================
 # CONTROL
