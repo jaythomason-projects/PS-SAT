@@ -16,8 +16,8 @@
         </Grid.RowDefinitions>
         <WrapPanel Grid.Row="0" Orientation="Horizontal">
             <StackPanel Orientation="Horizontal">
-                <Image Source="%%RESOURCE_PATH%%\search-icon.png" Width="25" Height="25"  Margin="0,0,10,10"/>
-                <TextBox Name="SearchInputTextBox" VerticalAlignment="Center" Style="{StaticResource BaseTextBox}"/>
+                <Image Source="%%RESOURCE_PATH%%\search-icon.png" Width="30" Height="30" Margin="0,0,5,10"/>
+                <TextBox Name="SearchInputTextBox" Width="255" VerticalAlignment="Center" Style="{StaticResource BaseTextBox}"/>
             </StackPanel>
             <Button Name="SearchNameButton" Content="Search By Name" Style="{StaticResource BaseButton}"/>
             <Button Name="SearchIDButton" Content="Search By ID" Style="{StaticResource BaseButton}"/>
