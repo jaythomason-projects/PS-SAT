@@ -3,7 +3,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="%%RESOURCE_PATH%%\sharedResources.xaml"/>
+                <ResourceDictionary Source="%RESOURCE_PATH%\sharedResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
