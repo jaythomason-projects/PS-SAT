@@ -1,0 +1,19 @@
+<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <WrapPanel Name="PropertiesPanel" 
+                        Orientation="Horizontal" 
+                        Width="Auto" 
+                        Height="Auto">
+            </WrapPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
