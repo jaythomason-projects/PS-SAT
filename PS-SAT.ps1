@@ -93,7 +93,7 @@ foreach ($xamlFile in $xamlFiles) {
     $xamlString = Get-Content -Path $xamlFilePath -Raw
 
     # Fix relative path issue: Replace empty ResourceDictionary element with shared resources path in XAML
-    $modifiedXamlString = $xamlString -replace '%%RESOURCE_PATH%%', $resourceFolderPath
+    $modifiedXamlString = $xamlString -replace '%RESOURCE_PATH%', $resourceFolderPath
 
     # Add each XAML string to a hashtable
     $xamlName = $xamlFile -replace ".xaml", ""
@@ -101,24 +101,38 @@ foreach ($xamlFile in $xamlFiles) {
     Write-Host "Successfully imported XAML string: $xamlFilePath"
 }
 
-# Create UI pages
+# Define UI pages, then create parent windows and tabs
 $global:uiPages = @{
     'MainWindow' = @{}
     'UserPropertiesTab' = @{}
     'LogTab' = @{}
 }
 
-# Create parent window and tab elements
-$uiPages['MainWindow']                   = New-XmlObjectFromXamlString -XamlString $xamlStrings['mainWindow']
-$uiPages['UserPropertiesTab']            = New-XmlObjectFromXamlString -XamlString $xamlStrings['userPropertiesTab']
-$uiPages['LogTab']                       = New-XmlObjectFromXamlString -XamlString $xamlStrings['logTab']
+$global:uiPages['MainWindow']                   = New-XmlObjectFromXamlString -XamlString $xamlStrings['mainWindow']
+$global:uiPages['UserPropertiesTab']            = New-XmlObjectFromXamlString -XamlString $xamlStrings['userPropertiesTab']
+$global:uiPages['LogTab']                       = New-XmlObjectFromXamlString -XamlString $xamlStrings['logTab']
 
-# Assign variables to each named node in the UI pages
+# Assign variables to each named element in UI pages
 $global:uiElements = @{}
 
-# Go through each UI page in the hashtable
-foreach ($element in $uiPages.Values) {
-    Set-ElementVariables -Element $element
+foreach ($value in $uiPages.Values) {
+    Set-ElementVariables -Element $value
+}
+
+# Order tabs and define headers, then add to tab control
+$tabs = [ordered]@{
+    "UserInformationTab" = @{
+        "Tab" = $uiPages['UserPropertiesTab']
+        "Header" = "User Properties"
+    }
+    "LogTab" = @{
+        "Tab" = $uiPages['LogTab']
+        "Header" = "Notes/Log"
+    }
+}
+
+foreach ($tab in $tabs.Values) {
+    Add-TabToControl -Tab $tab -Control $global:uiElements["TabControl"]
 }
 
 # ==============================
@@ -129,3 +143,4 @@ foreach ($element in $uiPages.Values) {
 # ==============================
 # MAIN
 # ==============================
+$uiPages['MainWindow'].ShowDialog() | Out-Null

@@ -11,7 +11,7 @@ function script:New-XmlObjectFromXamlString {
     return $xmlObject
 }
 
-function Set-ElementVariables {
+function script:Set-ElementVariables {
     param (
         [Parameter(Mandatory=$true)]
         [object]$Element
@@ -30,6 +30,21 @@ function Set-ElementVariables {
     }
 }
 
+function script:Add-TabToControl {
+    param (
+        [Parameter(Mandatory=$true)]
+        [object]$Tab,
+        [Parameter(Mandatory=$true)]
+        [object]$Control
+    )
+
+    $tabItem = New-Object System.Windows.Controls.TabItem
+    $tabItem.Header = $Tab.Header
+    $tabItem.Content = $Tab.Tab
+    $tabItem.Style = $Control.FindResource("BaseTabItem")
+    $Control.Items.Add($tabItem) | Out-Null
+}
+
 function Add-TabItems {
     # TODO: Create function
 }
@@ -39,5 +54,9 @@ function Add-ToolboxButtons {
 }
 
 function Add-UserPropertyPanels {
+    # TODO: Create function
+}
+
+function Reset-UI {
     # TODO: Create function
 }
