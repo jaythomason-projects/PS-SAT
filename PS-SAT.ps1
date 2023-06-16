@@ -138,9 +138,26 @@ foreach ($tab in $tabs.Values) {
 # ==============================
 # CONTROL
 # ==============================
-# TODO: Add click events to UI elements that trigger model functions
+# Add event handlers
+$global:uiElements["SearchNameButton"].Add_Click({
+    $user = Search-UserHashTable -Attributes @("DisplayName", "SamAccountName") -SearchText $global:uiElements["SearchInputTextBox"].Text.Trim() -FilterSearch
+})
+
+$global:uiElements["SearchIDButton"].Add_Click({
+    $user = Search-UserHashTable -Attributes @("EmployeeID") -SearchText $global:uiElements["SearchInputTextBox"].Text.Trim()
+})
 
 # ==============================
 # MAIN
 # ==============================
+$executionTime = Measure-Command -Expression { 
+    $global:userHashTable = Get-UserHashTable -Properties @(
+        "SamAccountName",
+        "DisplayName",
+        "EmployeeID"
+    )
+}
+
+Write-Host "Execution time: $($executionTime.Minutes)m:$($executionTime.Seconds)s:$($executionTime.Milliseconds)ms"
+
 $uiPages['MainWindow'].ShowDialog() | Out-Null

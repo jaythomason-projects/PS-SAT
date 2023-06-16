@@ -17,9 +17,11 @@ function script:Set-ElementVariables {
         [object]$Element
     )
 
+    $hashTable = $global:uiElements
+
     # If the element is a UIElement and has a Name property, add it to the hashtable
     if ($Element -is [System.Windows.UIElement] -and ![string]::IsNullOrEmpty($Element.Name)) {
-        $global:uiElements[$Element.Name] = $Element
+        $hashTable[$Element.Name] = $Element
     }
 
     # Go through each child element recursively
