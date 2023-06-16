@@ -27,9 +27,9 @@ function script:Get-UserHashTable {
 function script:Search-UserHashTable {
     param(
         [Parameter(Mandatory=$true)]
-        [array]$Attributes,
+        [array]$Properties,
         [ValidateNotNullOrEmpty()]
-        [string]$SearchText,
+        [string]$String,
         [Parameter()]
         [switch]$FilterSearch
     )
@@ -41,8 +41,8 @@ function script:Search-UserHashTable {
     foreach ($user in $hashTable.Keys) {
         # If FilterSearch switch is enabled, perform a 'like' search
         if ($FilterSearch) {
-            foreach ($attr in $Attributes) {
-                if ($hashTable[$user].$attr -like "*$SearchText*") {
+            foreach ($attr in $Properties) {
+                if ($hashTable[$user].$attr -like "*$String*") {
                     $results += $hashTable[$user]
                     # Exit the loop after finding the first match
                     break
@@ -51,8 +51,8 @@ function script:Search-UserHashTable {
         }
         # If FilterSearch switch is not enabled, perform an 'exact' search 
         else {
-            foreach ($attr in $Attributes) {
-                if ($hashTable[$user].$attr -eq $SearchText) {
+            foreach ($attr in $Properties) {
+                if ($hashTable[$user].$attr -eq $String) {
                     $results += $hashTable[$user]
                     # Exit the loop after finding the first match
                     break
@@ -83,7 +83,30 @@ function script:Select-FromArray {
 
 
 function Get-User {
-    # TODO: Create function
+    param(
+        [Parameter(Mandatory=$true)]
+        [hashtable]$Arguments
+    )
+
+    $user = Search-UserHashTable @Arguments
+
+    if ($user) {
+        # Get user AD object
+        $selectedUser = Get-ADUser -Identity $user.SamAccountName
+
+        # TODO: Move this to view -
+        # Update 'Selected User:' text
+        $global:uiElements['SelectedUserText'].Text = $selectedUser.SamAccountName
+
+         # TODO: Get user properites
+
+         # TODO: Add log entry
+    } else {
+        [System.Windows.MessageBox]::Show("No users were found with the details provided. Please verify the information and try again.","No Users Found")
+        return
+    }
+
+    return $selectedUser
 }
 
 function Get-UserProperties {

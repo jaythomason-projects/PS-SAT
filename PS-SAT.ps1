@@ -103,9 +103,9 @@ foreach ($xamlFile in $xamlFiles) {
 
 # Define UI pages, then create parent windows and tabs
 $global:uiPages = @{
-    'MainWindow' = @{}
-    'UserPropertiesTab' = @{}
-    'LogTab' = @{}
+    MainWindow = @{}
+    UserPropertiesTab = @{}
+    LogTab = @{}
 }
 
 $global:uiPages['MainWindow']                   = New-XmlObjectFromXamlString -XamlString $xamlStrings['mainWindow']
@@ -122,12 +122,12 @@ foreach ($value in $uiPages.Values) {
 # Order tabs and define headers, then add to tab control
 $tabs = [ordered]@{
     "UserInformationTab" = @{
-        "Tab" = $uiPages['UserPropertiesTab']
-        "Header" = "User Properties"
+        Tab = $uiPages['UserPropertiesTab']
+        Header = "User Properties"
     }
     "LogTab" = @{
-        "Tab" = $uiPages['LogTab']
-        "Header" = "Notes/Log"
+        Tab = $uiPages['LogTab']
+        Header = "Notes/Log"
     }
 }
 
@@ -140,11 +140,21 @@ foreach ($tab in $tabs.Values) {
 # ==============================
 # Add event handlers
 $global:uiElements["SearchNameButton"].Add_Click({
-    $user = Search-UserHashTable -Attributes @("DisplayName", "SamAccountName") -SearchText $global:uiElements["SearchInputTextBox"].Text.Trim() -FilterSearch
+    $Arguments = @{
+        Properties = @("DisplayName", "SamAccountName")
+        String = $global:uiElements["SearchInputTextBox"].Text.Trim()
+        FilterSearch = $true
+    }
+    $selectedUser = Get-User $Arguments
 })
 
 $global:uiElements["SearchIDButton"].Add_Click({
-    $user = Search-UserHashTable -Attributes @("EmployeeID") -SearchText $global:uiElements["SearchInputTextBox"].Text.Trim()
+    $Arguments = @{
+        Properties = @("EmployeeID")
+        String = $global:uiElements["SearchInputTextBox"].Text.Trim()
+        FilterSearch = $false
+    }
+    $selectedUser = Get-User $Arguments
 })
 
 # ==============================
