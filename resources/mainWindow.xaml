@@ -29,7 +29,7 @@
                 FontWeight="SemiBold" 
                 Style="{StaticResource BaseTextBlock}"/>
             <TextBlock Name="SelectedUserText" 
-                Text="None" 
+                Text=""
                 FontSize="18" 
                 FontWeight="SemiBold" 
                 Style="{StaticResource BaseTextBlock}"/>

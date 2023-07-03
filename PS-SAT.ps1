@@ -161,9 +161,16 @@ $global:uiElements["SearchIDButton"].Add_Click({
     $selectedUser = Get-User $Arguments
 })
 
+$global:uiElements["ClearUserButton"].Add_Click({
+    $selectedUser = $null
+    Reset-UI
+})
+
 # ==============================
 # MAIN
 # ==============================
+Reset-UI
+
 $executionTime = Measure-Command -Expression { 
     $global:userHashTable = Get-UserHashTable -Properties @(
         "SamAccountName",
