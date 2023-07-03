@@ -69,6 +69,56 @@ function script:Search-UserHashTable {
     return $results
 }
 
+function script:Get-User {
+    param(
+        [Parameter(Mandatory=$true)]
+        [hashtable]$Arguments
+    )
+
+    $user = Search-UserHashTable @Arguments
+
+    if ($user) {
+        # Get user AD object and standard properties
+        $selectedUser = Get-ADUser -Identity $user.SamAccountName -Properties *
+
+        # Get user custom properties
+        $selectedUser = Get-UserCustomProperties -User $selectedUser
+
+         # TODO: Add log entry
+    } else {
+        [System.Windows.MessageBox]::Show("No users were found with the details provided. Please verify the information and try again.","No Users Found")
+        return
+    }
+
+    return $selectedUser
+}
+
+function script:Get-UserCustomProperties {
+    param (
+        [Parameter(Mandatory=$true)]
+        [object]$User
+    )
+
+    # Define custom user properties
+    $customProperties = @{
+        'PasswordLastSet' = {
+            $date = $User.PasswordLastSet
+
+            # format date and return result
+            $formattedDate = $date.ToString("dd-MM-yyyy HH:mm:ss")
+            return $formattedDate
+        }
+    }
+
+    # Add custom properties to the user object
+    foreach ($key in $customProperties.Keys) {
+        $value = & $customProperties[$key] $User
+        $user | Add-Member -MemberType NoteProperty -Name $key -Value $value -Force
+    }
+
+    return $User
+}
+
 function script:Select-FromArray {
     param(
         [Parameter(Mandatory=$true)]
@@ -80,36 +130,3 @@ function script:Select-FromArray {
 
     return $selection
 }
-
-
-function Get-User {
-    param(
-        [Parameter(Mandatory=$true)]
-        [hashtable]$Arguments
-    )
-
-    $user = Search-UserHashTable @Arguments
-
-    if ($user) {
-        # Get user AD object
-        $selectedUser = Get-ADUser -Identity $user.SamAccountName
-
-        # TODO: Move this to view -
-        # Update 'Selected User:' text
-        $global:uiElements['SelectedUserText'].Text = $selectedUser.SamAccountName
-
-         # TODO: Get user properites
-
-         # TODO: Add log entry
-    } else {
-        [System.Windows.MessageBox]::Show("No users were found with the details provided. Please verify the information and try again.","No Users Found")
-        return
-    }
-
-    return $selectedUser
-}
-
-function Get-UserProperties {
-    # TODO: Create function
-}
-

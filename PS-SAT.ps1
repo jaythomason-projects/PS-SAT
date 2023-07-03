@@ -11,6 +11,8 @@ Set-StrictMode -Version Latest
 # Stop the script if any command fails
 $ErrorActionPreference = "Stop"
 
+# TODO: Get-ADDomain, if error, not AD, exit script
+
 # Try to add assemblies
 $assemblies = @(
     "PresentationFramework"
@@ -132,7 +134,7 @@ $tabs = [ordered]@{
 }
 
 foreach ($tab in $tabs.Values) {
-    Add-TabToControl -Tab $tab -Control $global:uiElements["TabControl"]
+    Add-TabsToControl -Tab $tab -Control $global:uiElements["TabControl"]
 }
 
 # ==============================
@@ -146,6 +148,8 @@ $global:uiElements["SearchNameButton"].Add_Click({
         FilterSearch = $true
     }
     $selectedUser = Get-User $Arguments
+
+    Show-UserPropertyPanels -User $selectedUser
 })
 
 $global:uiElements["SearchIDButton"].Add_Click({
