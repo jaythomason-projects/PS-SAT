@@ -12,7 +12,8 @@
             <WrapPanel Name="PropertiesPanel" 
                         Orientation="Horizontal" 
                         Width="Auto" 
-                        Height="Auto">
+                        Height="Auto"
+                        Margin="5">
             </WrapPanel>
         </ScrollViewer>
     </Grid>
