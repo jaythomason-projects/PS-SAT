@@ -36,14 +36,15 @@ function script:Search-UserHashTable {
 
     $hashTable = $global:userHashTable
     $results = @()
+    $user = $null
 
     # Iterate over each user in the database
-    foreach ($user in $hashTable.Keys) {
+    foreach ($key in $hashTable.Keys) {
         # If FilterSearch switch is enabled, perform a 'like' search
         if ($FilterSearch) {
             foreach ($attr in $Properties) {
-                if ($hashTable[$user].$attr -like "*$String*") {
-                    $results += $hashTable[$user]
+                if ($hashTable[$key].$attr -like "*$String*") {
+                    $results += $hashTable[$key]
                     # Exit the loop after finding the first match
                     break
                 }
@@ -52,8 +53,8 @@ function script:Search-UserHashTable {
         # If FilterSearch switch is not enabled, perform an 'exact' search 
         else {
             foreach ($attr in $Properties) {
-                if ($hashTable[$user].$attr -eq $String) {
-                    $results += $hashTable[$user]
+                if ($hashTable[$key].$attr -eq $String) {
+                    $results += $hashTable[$key]
                     # Exit the loop after finding the first match
                     break
                 }
@@ -63,10 +64,10 @@ function script:Search-UserHashTable {
 
     # If more than one user is found, select from results
     if (($results).Count -gt 1) {
-        $results = Select-FromArray -Array $results -Title "Select a User"
+        $user = Select-FromArray -Array $results -Title "Select a User"
     }
     
-    return $results
+    return $user
 }
 
 function script:Get-User {
@@ -86,7 +87,7 @@ function script:Get-User {
 
          # TODO: Add log entry
     } else {
-        [System.Windows.MessageBox]::Show("No users were found with the details provided. Please verify the information and try again.","No Users Found")
+        [System.Windows.MessageBox]::Show("No users were found with the details provided. Please verify the information and try again.","No Users Found") | Out-Null
         return
     }
 

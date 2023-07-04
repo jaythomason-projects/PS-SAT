@@ -149,7 +149,9 @@ $global:uiElements["SearchNameButton"].Add_Click({
     }
     $selectedUser = Get-User $Arguments
 
-    Show-UserPropertyPanels -User $selectedUser
+    if ($selectedUser) {
+        Show-UserPropertyPanels -User $selectedUser
+    }
 })
 
 $global:uiElements["SearchIDButton"].Add_Click({
@@ -159,6 +161,10 @@ $global:uiElements["SearchIDButton"].Add_Click({
         FilterSearch = $false
     }
     $selectedUser = Get-User $Arguments
+
+    if ($selectedUser) {
+        Show-UserPropertyPanels -User $selectedUser
+    }
 })
 
 $global:uiElements["ClearUserButton"].Add_Click({
