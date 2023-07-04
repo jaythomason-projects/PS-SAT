@@ -64,10 +64,10 @@ function script:Search-UserHashTable {
 
     # If more than one user is found, select from results
     if (($results).Count -gt 1) {
-        $user = Select-FromArray -Array $results -Title "Select a User"
+        $results = Select-FromArray -Array $results -Title "Select a User"
     }
     
-    return $user
+    return $results
 }
 
 function script:Get-User {
@@ -85,7 +85,7 @@ function script:Get-User {
         # Get user custom properties
         $selectedUser = Get-UserCustomProperties -User $selectedUser
 
-         # TODO: Add log entry
+        Write-Log "Selected new user: $selectedUser" -LineBreak
     } else {
         [System.Windows.MessageBox]::Show("No users were found with the details provided. Please verify the information and try again.","No Users Found") | Out-Null
         return
@@ -130,4 +130,26 @@ function script:Select-FromArray {
     $selection = $Array | Out-GridView -Title $Title -PassThru
 
     return $selection
+}
+
+function script:Write-Log {
+    Param (
+        [Parameter(Mandatory=$true)]
+        [string]$Message,
+        [switch]$LineBreak
+    )
+
+    # Get the current date and time
+    $currentDateTime = Get-Date -Format "dd-MM-yyyy HH:mm:ss"
+
+    # Add a line break if the -LineBreak switch is present
+    If ($LineBreak) {
+        $global:uiElements['LogTextBox'].AppendText("-------------------------`n")
+    }
+
+    # Format the log message with the current date and time
+    $formattedMessage = "$CurrentDateTime - $Message"
+
+    # Append the message to the 'Log' textbox
+    $global:uiElements['LogTextBox'].AppendText("$formattedMessage`n")
 }
