@@ -62,7 +62,7 @@ try {
 # MODEL
 # ==============================
 # Get all module files
-$moduleFiles = Get-ChildItem -Path $moduleFolderPath -Filter *.psm1
+$moduleFiles = Get-ChildItem -Path $moduleFolderPath -Filter *.psm1 -Recurse
 
 foreach ($moduleFile in $moduleFiles) {
     # Set paths
@@ -146,10 +146,10 @@ $global:uiElements["SearchNameButton"].Add_Click({
         String = $global:uiElements["SearchInputTextBox"].Text.Trim()
         FilterSearch = $true
     }
-    $selectedUser = Get-User $Arguments
+    $selectedUser = Get-SelectedUser $Arguments
 
     if ($selectedUser) {
-        Show-UserPropertyPanels -User $selectedUser
+        Show-SelectedUserProps -User $selectedUser
     }
 })
 
@@ -159,10 +159,10 @@ $global:uiElements["SearchIDButton"].Add_Click({
         String = $global:uiElements["SearchInputTextBox"].Text.Trim()
         FilterSearch = $false
     }
-    $selectedUser = Get-User $Arguments
+    $selectedUser = Get-SelectedUser $Arguments
 
     if ($selectedUser) {
-        Show-UserPropertyPanels -User $selectedUser
+        Show-SelectedUserProps -User $selectedUser
     }
 })
 
@@ -179,7 +179,7 @@ Reset-UI
 $executionTime = Measure-Command -Expression { 
     Write-Host "Loading local user database to optimize Active Directory query times. This may take up to 2-3 minutes. Please wait."
     
-    $global:userHashTable = Get-UserHashTable -Properties @(
+    $global:userHashTable = Initialize-UserHashTable -Properties @(
         "SamAccountName",
         "DisplayName",
         "EmployeeID"
