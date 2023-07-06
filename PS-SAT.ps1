@@ -109,6 +109,7 @@ $global:uiPages = @{
 }
 
 $global:uiPages['MainWindow']                   = New-XmlObjectFromXamlString -XamlString $xamlStrings['mainWindow']
+$global:uiPages['LoadingWindow']                = New-XmlObjectFromXamlString -XamlString $xamlStrings['loadingWindow']
 $global:uiPages['UserPropertiesTab']            = New-XmlObjectFromXamlString -XamlString $xamlStrings['userPropertiesTab']
 $global:uiPages['LogTab']                       = New-XmlObjectFromXamlString -XamlString $xamlStrings['logTab']
 
