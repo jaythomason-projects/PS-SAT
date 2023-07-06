@@ -11,8 +11,6 @@ Set-StrictMode -Version Latest
 # Stop the script if any command fails
 $ErrorActionPreference = "Stop"
 
-# TODO: Get-ADDomain, if error, not AD, exit script
-
 # Try to add assemblies
 $assemblies = @(
     "PresentationFramework"
@@ -178,6 +176,8 @@ $global:uiElements["ClearUserButton"].Add_Click({
 Reset-UI
 
 $executionTime = Measure-Command -Expression { 
+    Write-Host "Loading local user database to optimize Active Directory query times. This may take up to 2-3 minutes. Please wait."
+    
     $global:userHashTable = Get-UserHashTable -Properties @(
         "SamAccountName",
         "DisplayName",
@@ -186,5 +186,15 @@ $executionTime = Measure-Command -Expression {
 }
 
 Write-Host "Execution time: $($executionTime.Minutes)m:$($executionTime.Seconds)s:$($executionTime.Milliseconds)ms"
+
+# Hide console window
+Add-Type -Name Window -Namespace Console -MemberDefinition '
+[DllImport("Kernel32.dll")]
+public static extern IntPtr GetConsoleWindow();
+
+[DllImport("user32.dll")]
+public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);'
+
+[Console.Window]::ShowWindow([Console.Window]::GetConsoleWindow(), 0) | Out-Null
 
 $uiPages['MainWindow'].ShowDialog() | Out-Null
