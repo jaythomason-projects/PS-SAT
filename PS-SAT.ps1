@@ -11,6 +11,15 @@ Set-StrictMode -Version Latest
 # Stop the script if any command fails
 $ErrorActionPreference = "Stop"
 
+# Try to find domain server
+try {
+    $domainRoot = Get-ADDomain
+    Write-Host "Successfully found Active Directory server: $domainRoot"
+} catch {
+    Write-Error "Failed to find Active Directory server. Error: $_ Exiting script."
+    return
+}
+
 # Try to add assemblies
 $assemblies = @(
     "PresentationFramework"
@@ -24,7 +33,7 @@ foreach ($assembly in $assemblies) {
         Add-Type -AssemblyName $assembly
         Write-Host "Successfully loaded assembly: $assembly"
     } catch {
-        Write-Error "Failed to load assembly: $assembly. Error: $_. Exiting script."
+        Write-Error "Failed to load assembly: $assembly. Error: $_ Exiting script."
         return
     }
 }
