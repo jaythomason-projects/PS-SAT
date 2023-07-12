@@ -1,13 +1,22 @@
-function script:Initialize-UserHashTable {
+function script:New-UserHashTable {
     param(
+        [Parameter(Mandatory=$false)]
+        [array]$UserFilter,
+
         [Parameter(Mandatory=$true)]
         [array]$Properties
     )
     
     $hashTable = @{}
 
-    # Get all users and specified properties
-    $users = Get-ADUser -Filter * -Properties $Properties
+    # Check if the UserFilter parameter was supplied
+    if ($UserFilter) {
+        $users = foreach ($user in $UserFilter) {
+            Get-ADUser -Identity $user.SamAccountName -Properties $Properties -ErrorAction SilentlyContinue
+        }
+    } else {
+        $users = Get-ADUser -Filter * -Properties $Properties
+    }
 
     foreach ($user in $users) {
         $userProperties = New-Object PSObject

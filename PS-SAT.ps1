@@ -20,7 +20,7 @@ try {
     return
 }
 
-# Try to add assemblies
+# Try to load assemblies
 $assemblies = @(
     "PresentationFramework"
     "PresentationCore"
@@ -68,7 +68,7 @@ try {
 }
 
 # ==============================
-# MODEL
+# IMPORT MODULES
 # ==============================
 # Get all module files
 $moduleFiles = Get-ChildItem -Path $moduleFolderPath -Filter *.psm1 -Recurse
@@ -88,7 +88,7 @@ foreach ($moduleFile in $moduleFiles) {
 }
 
 # ==============================
-# VIEW
+# IMPORT RESOURCES
 # ==============================
 # Get all XAML files, except the sharedResources XAML file
 $xamlStrings = @{}
@@ -110,6 +110,9 @@ foreach ($xamlFile in $xamlFiles) {
     Write-Host "Successfully imported XAML string: $xamlFilePath"
 }
 
+# ==============================
+# CREATE UI
+# ==============================
 # Define UI pages, then create parent windows and tabs
 $global:uiPages = @{
     MainWindow = @{}
@@ -153,26 +156,20 @@ $global:uiElements["SearchNameButton"].Add_Click({
     $Arguments = @{
         Properties = @("DisplayName", "SamAccountName")
         String = $global:uiElements["SearchInputTextBox"].Text.Trim()
+        HashTable = $global:userHashTable
         FilterSearch = $true
     }
     $selectedUser = Get-SelectedUser $Arguments
-
-    if ($selectedUser) {
-        Show-SelectedUserProps -User $selectedUser
-    }
 })
 
 $global:uiElements["SearchIDButton"].Add_Click({
     $Arguments = @{
         Properties = @("EmployeeID")
         String = $global:uiElements["SearchInputTextBox"].Text.Trim()
+        HashTable = $global:userHashTable
         FilterSearch = $false
     }
     $selectedUser = Get-SelectedUser $Arguments
-
-    if ($selectedUser) {
-        Show-SelectedUserProps -User $selectedUser
-    }
 })
 
 $global:uiElements["ClearUserButton"].Add_Click({
@@ -187,8 +184,8 @@ Reset-UI
 
 $executionTime = Measure-Command -Expression { 
     Write-Host "Loading local user database to optimize Active Directory query times. This may take up to 2-3 minutes. Please wait."
-    
-    $global:userHashTable = Initialize-UserHashTable -Properties @(
+
+    $global:userHashTable = New-UserHashTable -Properties @(
         "SamAccountName",
         "DisplayName",
         "EmployeeID"

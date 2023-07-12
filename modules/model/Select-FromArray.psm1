@@ -2,6 +2,8 @@ function script:Select-FromArray {
     param(
         [Parameter(Mandatory=$true)]
         [System.Array]$Array,
+
+        [Parameter(Mandatory=$false)]
         [string]$Title
     )
 

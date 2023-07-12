@@ -4,6 +4,7 @@ function script:Get-SelectedUser {
         [hashtable]$Arguments
     )
 
+    $selectedUser = $null
     $user = Search-UserHashTable @Arguments
 
     if ($user) {
@@ -12,6 +13,9 @@ function script:Get-SelectedUser {
 
         # Get user custom properties
         $selectedUser = Get-UserCustomProps -User $selectedUser
+
+        # Show user properties in properties panel
+        Show-SelectedUserProps -User $selectedUser
 
         Write-Log "Selected new user: $selectedUser" -LineBreak
     } else {
